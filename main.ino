@@ -1,39 +1,41 @@
-// Définition des broches
-const int trigPin = 9;       // Broche TRIG du capteur ultrason
-const int echoPin = 10;      // Broche ECHO du capteur ultrason
-const int buzzer = 6;        // Broche du buzzer
+long duration;
+int distance;
+int safetyDistance;
 
 void setup() {
-    pinMode(trigPin, OUTPUT);
-    pinMode(echoPin, INPUT);
-    pinMode(buzzer, OUTPUT);
-    Serial.begin(9600);
+  pinMode(2, OUTPUT);
+  pinMode(3, INPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  Serial.begin(9600);
 }
 
 void loop() {
-    // Mesurer la distance avec le capteur ultrason
-    long duration;
-    int distance;
+  digitalWrite(4, HIGH);
+  delay(100);
+  digitalWrite(4, LOW);
+  delay(100);
 
-    digitalWrite(trigPin, LOW);
-    delayMicroseconds(2);
-    digitalWrite(trigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trigPin, LOW);
+  digitalWrite(2, LOW);
+  delayMicroseconds(2);
+  digitalWrite(2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(2, LOW);
 
-    duration = pulseIn(echoPin, HIGH);
-    distance = duration * 0.034 / 2;  // Convertir en cm
+  duration = pulseIn(3, HIGH);
+  distance = duration * 0.034 / 2;
 
-    Serial.print("Distance: ");
-    Serial.print(distance);
-    Serial.println(" cm");
+  safetyDistance = distance;
 
-    // Vérifier si un obstacle est proche
-    if (distance > 0 && distance <= 50) {  // Ajuster la distance seuil selon le besoin
-        tone(buzzer, 1000);  // Activer le buzzer à 1000 Hz
-    } else {
-        noTone(buzzer);  // Désactiver le buzzer si aucun obstacle
-    }
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
 
-    delay(200);
+  // Vérifier si un obstacle est proche
+  if (safetyDistance <= 50) { // Ajuster la distance seuil selon le besoin
+    digitalWrite(5, HIGH);    // Activer le buzzer à 1000 Hz
+  } 
+  else {
+    digitalWrite(5, LOW);     // Désactiver le buzzer si aucun obstacle
+  }
 }
